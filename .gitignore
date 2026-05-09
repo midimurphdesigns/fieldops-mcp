@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+bun.lockb
+
+# Build / runtime artifacts
+dist/
+out/
+build/
+*.tsbuildinfo
+*.tgz
+
+# Environment / secrets — keep .env.example only
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Caches / coverage / logs
+.cache/
+.eslintcache
+coverage/
+*.lcov
+logs/
+*.log
+
+# Editor / OS
+.vscode/
+!.vscode/extensions.json
+.idea/
+.cursor/
+.DS_Store
+*.swp
+*~

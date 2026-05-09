@@ -1,0 +1,48 @@
+{
+  "techs": [
+    { "id": "T-01", "display_name": "Tech A.M.", "skills": ["hvac", "diagnostic"], "shift_start_local": "08:00", "shift_end_local": "17:00", "home_region": "north" },
+    { "id": "T-02", "display_name": "Tech B.K.", "skills": ["hvac", "electrical"], "shift_start_local": "08:00", "shift_end_local": "17:00", "home_region": "north" },
+    { "id": "T-03", "display_name": "Tech C.R.", "skills": ["solar", "electrical"], "shift_start_local": "07:00", "shift_end_local": "16:00", "home_region": "south" },
+    { "id": "T-04", "display_name": "Tech D.S.", "skills": ["plumbing", "diagnostic"], "shift_start_local": "09:00", "shift_end_local": "18:00", "home_region": "central" },
+    { "id": "T-05", "display_name": "Tech E.N.", "skills": ["hvac"], "shift_start_local": "08:00", "shift_end_local": "17:00", "home_region": "central" },
+    { "id": "T-06", "display_name": "Tech F.P.", "skills": ["electrical", "diagnostic"], "shift_start_local": "10:00", "shift_end_local": "19:00", "home_region": "south" },
+    { "id": "T-07", "display_name": "Tech G.O.", "skills": ["solar"], "shift_start_local": "07:00", "shift_end_local": "16:00", "home_region": "north" },
+    { "id": "T-08", "display_name": "Tech H.L.", "skills": ["plumbing", "hvac"], "shift_start_local": "08:00", "shift_end_local": "17:00", "home_region": "south" }
+  ],
+  "customers": [
+    { "id": "C-101", "display_name": "Maple Ridge Apartments", "region": "north", "preferred_contact": "email" },
+    { "id": "C-102", "display_name": "Birchwood Family Dental", "region": "central", "preferred_contact": "sms" },
+    { "id": "C-103", "display_name": "Ironside Auto Body", "region": "south", "preferred_contact": "sms" },
+    { "id": "C-104", "display_name": "Cedar Hollow Bakery", "region": "north", "preferred_contact": "email" },
+    { "id": "C-105", "display_name": "Pinecrest Veterinary", "region": "central", "preferred_contact": "sms" },
+    { "id": "C-106", "display_name": "Harbor Point Storage", "region": "south", "preferred_contact": "email" },
+    { "id": "C-107", "display_name": "Stonebridge Yoga Studio", "region": "north", "preferred_contact": "sms" },
+    { "id": "C-108", "display_name": "Fairview Coworking", "region": "central", "preferred_contact": "email" }
+  ],
+  "jobs": [
+    { "id": "J-2001", "customer_id": "C-101", "description": "Rooftop AC unit not cooling, multiple tenant complaints", "required_skill": "hvac", "priority": "urgent", "status": "open", "created_at": "2026-05-08T13:20:00Z", "scheduled_at": null, "assigned_tech_id": null, "estimated_duration_minutes": 120, "flag_reason": null },
+    { "id": "J-2002", "customer_id": "C-102", "description": "Front-of-house outlet sparking when load applied", "required_skill": "electrical", "priority": "urgent", "status": "open", "created_at": "2026-05-09T08:05:00Z", "scheduled_at": null, "assigned_tech_id": null, "estimated_duration_minutes": 90, "flag_reason": null },
+    { "id": "J-2003", "customer_id": "C-103", "description": "Compressor short-cycling on shop-floor unit", "required_skill": "hvac", "priority": "normal", "status": "open", "created_at": "2026-05-09T09:14:00Z", "scheduled_at": null, "assigned_tech_id": null, "estimated_duration_minutes": 90, "flag_reason": null },
+    { "id": "J-2004", "customer_id": "C-104", "description": "Walk-in cooler temperature drifting above safe threshold", "required_skill": "hvac", "priority": "urgent", "status": "open", "created_at": "2026-05-09T07:42:00Z", "scheduled_at": null, "assigned_tech_id": null, "estimated_duration_minutes": 150, "flag_reason": null },
+    { "id": "J-2005", "customer_id": "C-105", "description": "Backup generator failed last weekly self-test", "required_skill": "diagnostic", "priority": "normal", "status": "open", "created_at": "2026-05-08T16:30:00Z", "scheduled_at": null, "assigned_tech_id": null, "estimated_duration_minutes": 60, "flag_reason": null },
+    { "id": "J-2006", "customer_id": "C-106", "description": "Annual solar inverter inspection and firmware check", "required_skill": "solar", "priority": "low", "status": "open", "created_at": "2026-05-07T11:00:00Z", "scheduled_at": null, "assigned_tech_id": null, "estimated_duration_minutes": 90, "flag_reason": null },
+    { "id": "J-2007", "customer_id": "C-107", "description": "Hot water tap delivering tepid water in changing rooms", "required_skill": "plumbing", "priority": "normal", "status": "open", "created_at": "2026-05-09T10:01:00Z", "scheduled_at": null, "assigned_tech_id": null, "estimated_duration_minutes": 75, "flag_reason": null },
+    { "id": "J-2008", "customer_id": "C-108", "description": "Conference-room thermostat unresponsive after building outage", "required_skill": "hvac", "priority": "normal", "status": "scheduled", "created_at": "2026-05-08T14:00:00Z", "scheduled_at": "2026-05-09T14:00:00Z", "assigned_tech_id": "T-05", "estimated_duration_minutes": 60, "flag_reason": null },
+    { "id": "J-2009", "customer_id": "C-101", "description": "Stairwell lighting circuit tripping nightly", "required_skill": "electrical", "priority": "normal", "status": "scheduled", "created_at": "2026-05-08T10:30:00Z", "scheduled_at": "2026-05-09T11:00:00Z", "assigned_tech_id": "T-02", "estimated_duration_minutes": 90, "flag_reason": null },
+    { "id": "J-2010", "customer_id": "C-103", "description": "Solar array output 22% below baseline this week", "required_skill": "solar", "priority": "normal", "status": "open", "created_at": "2026-05-09T06:55:00Z", "scheduled_at": null, "assigned_tech_id": null, "estimated_duration_minutes": 120, "flag_reason": null },
+    { "id": "J-2011", "customer_id": "C-104", "description": "Bakery oven hood vent rattle at high speed", "required_skill": "diagnostic", "priority": "low", "status": "open", "created_at": "2026-05-06T15:10:00Z", "scheduled_at": null, "assigned_tech_id": null, "estimated_duration_minutes": 45, "flag_reason": null },
+    { "id": "J-2012", "customer_id": "C-105", "description": "Reception sink draining slowly, suspected blockage", "required_skill": "plumbing", "priority": "low", "status": "open", "created_at": "2026-05-08T12:20:00Z", "scheduled_at": null, "assigned_tech_id": null, "estimated_duration_minutes": 60, "flag_reason": null }
+  ],
+  "history": [
+    { "job_id": "H-1901", "tech_id": "T-01", "customer_id": "C-101", "completed_at": "2026-05-02T15:00:00Z", "outcome": "resolved", "notes": "Replaced capacitor on rooftop unit; airflow verified at 410 CFM." },
+    { "job_id": "H-1902", "tech_id": "T-02", "customer_id": "C-101", "completed_at": "2026-04-21T13:30:00Z", "outcome": "resolved", "notes": "Reset breaker, confirmed normal load on stairwell circuit." },
+    { "job_id": "H-1903", "tech_id": "T-04", "customer_id": "C-102", "completed_at": "2026-04-28T11:00:00Z", "outcome": "resolved", "notes": "Replaced shut-off valve under reception sink." },
+    { "job_id": "H-1904", "tech_id": "T-03", "customer_id": "C-103", "completed_at": "2026-05-04T16:45:00Z", "outcome": "follow_up_needed", "notes": "Inverter logs show partial-shade derate; recommended panel-level monitoring." },
+    { "job_id": "H-1905", "tech_id": "T-05", "customer_id": "C-104", "completed_at": "2026-05-05T10:15:00Z", "outcome": "resolved", "notes": "Cleaned condenser coils; cooler holding 38F." },
+    { "job_id": "H-1906", "tech_id": "T-06", "customer_id": "C-105", "completed_at": "2026-04-30T14:00:00Z", "outcome": "no_access", "notes": "Building locked; rescheduled per customer request." },
+    { "job_id": "H-1907", "tech_id": "T-07", "customer_id": "C-106", "completed_at": "2026-04-15T09:30:00Z", "outcome": "resolved", "notes": "Annual inspection complete; firmware updated to 4.12." },
+    { "job_id": "H-1908", "tech_id": "T-08", "customer_id": "C-107", "completed_at": "2026-05-01T12:45:00Z", "outcome": "resolved", "notes": "Replaced mixing valve; verified hot water at 118F." },
+    { "job_id": "H-1909", "tech_id": "T-01", "customer_id": "C-104", "completed_at": "2026-04-25T11:20:00Z", "outcome": "resolved", "notes": "Walk-in defrost cycle reprogrammed; logs clean for 7 days." },
+    { "job_id": "H-1910", "tech_id": "T-04", "customer_id": "C-108", "completed_at": "2026-04-18T15:00:00Z", "outcome": "resolved", "notes": "Cleared P-trap blockage in coworking kitchenette." }
+  ]
+}
