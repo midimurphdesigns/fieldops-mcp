@@ -1,0 +1,25 @@
+{
+  "name": "fieldops-mcp-web",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Hosted showcase for fieldops-mcp — interactive tour of real captured Claude Desktop transcripts of the 6 MCP tools.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "^16.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "tailwindcss": "^4",
+    "@tailwindcss/postcss": "^4",
+    "typescript": "^5"
+  }
+}
