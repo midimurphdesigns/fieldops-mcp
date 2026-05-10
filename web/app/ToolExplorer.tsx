@@ -1,98 +1,135 @@
 "use client";
 
-import { useState } from "react";
+import * as React from "react";
+import { Wrench } from "lucide-react";
+
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import { TOOLS, FULL_SESSION } from "@/lib/transcripts";
 import { Transcript } from "./Transcript";
+import { cn } from "@/lib/utils";
 
-type View = string; // tool slug or "__session__"
+const SESSION_KEY = "__session__";
 
 export function ToolExplorer() {
-  const [view, setView] = useState<View>(TOOLS[0]?.slug ?? "__session__");
-
+  const [view, setView] = React.useState<string>(TOOLS[0]?.slug ?? SESSION_KEY);
+  const isSession = view === SESSION_KEY;
   const selectedTool = TOOLS.find((t) => t.slug === view) ?? null;
-  const isSession = view === "__session__";
 
+  // Mobile: render a horizontal Tabs strip; Desktop: vertical sidebar.
   return (
-    <section>
-      <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-6">
-        <nav className="space-y-1 text-xs md:max-h-[70vh] md:overflow-y-auto pr-2 md:border-r border-white/5">
-          <div className="text-[10px] uppercase tracking-wider text-[rgb(var(--muted))] mb-2 px-2">
-            Tools
-          </div>
-          {TOOLS.map((tool) => (
-            <button
-              key={tool.slug}
-              onClick={() => setView(tool.slug)}
-              className={`block w-full text-left p-2 ${
-                view === tool.slug
-                  ? "bg-white/5 border-l-2 border-[rgb(var(--accent))]"
-                  : "border-l-2 border-transparent hover:bg-white/5"
-              }`}
-            >
-              <div className="font-mono">{tool.name}</div>
-              <div className="text-[10px] text-[rgb(var(--muted))] uppercase tracking-wider mt-1">
-                {tool.shape}
-              </div>
-            </button>
-          ))}
+    <Tabs value={view} onValueChange={setView}>
+      {/* Mobile-only horizontal tab strip */}
+      <div className="md:hidden mb-4">
+        <ScrollArea className="w-full">
+          <TabsList className="flex flex-nowrap">
+            {TOOLS.map((t) => (
+              <TabsTrigger key={t.slug} value={t.slug} className="font-mono">
+                {t.name}
+              </TabsTrigger>
+            ))}
+            <TabsTrigger value={SESSION_KEY}>Full session</TabsTrigger>
+          </TabsList>
+        </ScrollArea>
+      </div>
 
-          <div className="text-[10px] uppercase tracking-wider text-[rgb(var(--muted))] mt-6 mb-2 px-2">
-            Live session
-          </div>
-          <button
-            onClick={() => setView("__session__")}
-            className={`block w-full text-left p-2 ${
-              isSession
-                ? "bg-white/5 border-l-2 border-[rgb(var(--accent))]"
-                : "border-l-2 border-transparent hover:bg-white/5"
-            }`}
-          >
-            <div className="font-mono">Full Claude run</div>
-            <div className="text-[10px] text-[rgb(var(--muted))] uppercase tracking-wider mt-1">
-              All 6 tools, end to end
-            </div>
-          </button>
+      <section className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-6">
+        {/* Desktop-only vertical sidebar */}
+        <nav
+          className="hidden md:block text-xs"
+          aria-label="Tool navigation"
+        >
+          <ScrollArea className="md:max-h-[70vh] pr-2">
+            <p className="text-[10px] font-mono uppercase tracking-wider text-[var(--color-muted-foreground)] mb-2 px-2">
+              Tools
+            </p>
+            <TabsList className="flex flex-col items-stretch gap-1 bg-transparent">
+              {TOOLS.map((t) => (
+                <TabsTrigger
+                  key={t.slug}
+                  value={t.slug}
+                  className={cn(
+                    "justify-start text-left h-auto px-2 py-2 normal-case tracking-normal",
+                    "data-[state=active]:bg-white/5 data-[state=active]:border-[var(--color-primary)]",
+                  )}
+                >
+                  <span className="block w-full">
+                    <span className="block font-mono text-xs">{t.name}</span>
+                    <span className="block text-[10px] text-[var(--color-muted-foreground)] uppercase tracking-wider mt-1">
+                      {t.shape}
+                    </span>
+                  </span>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+
+            <Separator className="my-4" />
+
+            <p className="text-[10px] font-mono uppercase tracking-wider text-[var(--color-muted-foreground)] mb-2 px-2">
+              Live session
+            </p>
+            <TabsList className="flex flex-col items-stretch gap-1 bg-transparent">
+              <TabsTrigger
+                value={SESSION_KEY}
+                className={cn(
+                  "justify-start text-left h-auto px-2 py-2 normal-case tracking-normal",
+                  "data-[state=active]:bg-white/5 data-[state=active]:border-[var(--color-primary)]",
+                )}
+              >
+                <span className="block w-full">
+                  <span className="block text-xs">Full Claude run</span>
+                  <span className="block text-[10px] text-[var(--color-muted-foreground)] uppercase tracking-wider mt-1">
+                    All 6 tools, end to end
+                  </span>
+                </span>
+              </TabsTrigger>
+            </TabsList>
+          </ScrollArea>
         </nav>
 
         <div className="text-xs leading-5 min-w-0">
-          {selectedTool && (
-            <article className="space-y-5">
+          {TOOLS.map((tool) => (
+            <TabsContent key={tool.slug} value={tool.slug} className="space-y-5">
               <header>
-                <div className="text-[10px] uppercase tracking-wider text-[rgb(var(--muted))] mb-1">
-                  {selectedTool.shape}
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <Wrench className="size-4 text-[var(--color-primary)]" />
+                  <h2 className="font-mono text-lg">{tool.name}</h2>
+                  <Badge variant="muted" className="ml-2">
+                    {tool.shape}
+                  </Badge>
                 </div>
-                <h2 className="font-mono text-lg">{selectedTool.name}</h2>
-                <p className="mt-2 text-[rgb(var(--ink))]">{selectedTool.oneLiner}</p>
-                <p className="mt-3 text-[rgb(var(--muted))]">{selectedTool.designNote}</p>
-              </header>
-
-              <Transcript steps={selectedTool.steps} />
-            </article>
-          )}
-
-          {isSession && (
-            <article className="space-y-5">
-              <header>
-                <div className="text-[10px] uppercase tracking-wider text-[rgb(var(--muted))] mb-1">
-                  Live Claude session
-                </div>
-                <h2 className="text-lg">Triage and assignment, end to end</h2>
-                <p className="mt-2 text-[rgb(var(--ink))]">
-                  Captured 2026-05-09 with claude-sonnet-4-6. The dispatcher's morning: three
-                  urgent jobs, one needs an HVAC tech assigned and a confirmation drafted.
-                </p>
-                <p className="mt-3 text-[rgb(var(--muted))]">
-                  Notice the model choosing Tech A.M. over Tech E.N. for headroom — Tech E.N. had
-                  exactly enough minutes for the job, no buffer. That's the kind of judgment call
-                  the deterministic smoke script can't make and the tool surface has to support.
+                <p className="text-[var(--color-foreground)] leading-6">{tool.oneLiner}</p>
+                <p className="mt-3 text-[var(--color-muted-foreground)] leading-5">
+                  {tool.designNote}
                 </p>
               </header>
+              <Transcript steps={tool.steps} />
+            </TabsContent>
+          ))}
 
-              <Transcript steps={FULL_SESSION} />
-            </article>
-          )}
+          <TabsContent value={SESSION_KEY} className="space-y-5">
+            <header>
+              <div className="text-[10px] font-mono uppercase tracking-wider text-[var(--color-muted-foreground)] mb-1">
+                Live Claude session
+              </div>
+              <h2 className="text-lg">Triage and assignment, end to end</h2>
+              <p className="mt-2 text-[var(--color-foreground)] leading-6">
+                Captured 2026-05-09 with claude-sonnet-4-6. The dispatcher&apos;s morning: three
+                urgent jobs, one needs an HVAC tech assigned and a confirmation drafted.
+              </p>
+              <p className="mt-3 text-[var(--color-muted-foreground)] leading-5">
+                Notice the model choosing Tech A.M. over Tech E.N. for headroom — Tech E.N. had
+                exactly enough minutes for the job, no buffer. That&apos;s the kind of judgment
+                call the deterministic smoke script can&apos;t make and the tool surface has to
+                support.
+              </p>
+            </header>
+            <Transcript steps={FULL_SESSION} />
+          </TabsContent>
         </div>
-      </div>
-    </section>
+      </section>
+    </Tabs>
   );
 }
