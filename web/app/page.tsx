@@ -39,7 +39,40 @@ export default function Page() {
 
       <ToolExplorer />
 
-      <footer className="mt-16 pt-8 border-t border-white/10 text-xs text-[rgb(var(--muted))] max-w-2xl">
+      <section className="mt-16 pt-8 border-t border-white/10 max-w-3xl">
+        <h2 className="text-base font-semibold mb-3">Run it yourself</h2>
+        <p className="text-xs leading-5 text-[rgb(var(--muted))] max-w-prose mb-4">
+          The showcase replays captured exchanges. To run the actual MCP server inside Claude
+          Desktop and drive it with your own prompts, clone the repo and wire it up — ~2 minutes.
+        </p>
+        <pre className="text-[11px] leading-5 p-3 border border-white/10 bg-white/[0.02] overflow-x-auto">
+{`git clone https://github.com/midimurphdesigns/fieldops-mcp.git
+cd fieldops-mcp
+bun install
+bun run smoke              # deterministic smoke run, no API key
+ANTHROPIC_API_KEY=… bun run smoke   # live Claude session`}
+        </pre>
+        <p className="text-xs leading-5 text-[rgb(var(--muted))] max-w-prose mt-4">
+          To register it with Claude Desktop, add an entry to{" "}
+          <code>~/Library/Application Support/Claude/claude_desktop_config.json</code>:
+        </p>
+        <pre className="text-[11px] leading-5 p-3 border border-white/10 bg-white/[0.02] overflow-x-auto mt-2">
+{`{
+  "mcpServers": {
+    "fieldops": {
+      "command": "bun",
+      "args": ["run", "/absolute/path/to/fieldops-mcp/src/server.ts"]
+    }
+  }
+}`}
+        </pre>
+        <p className="text-xs leading-5 text-[rgb(var(--muted))] max-w-prose mt-4">
+          Restart Claude Desktop and the six tools appear in the tool picker. Now your prompts
+          drive them, not mine.
+        </p>
+      </section>
+
+      <footer className="mt-12 pt-8 border-t border-white/10 text-xs text-[rgb(var(--muted))] max-w-2xl">
         Six tools, six structurally distinct shapes. The interesting design work is choosing what
         to expose — the absences are as much the design as the presences. See{" "}
         <a className="underline" href="https://github.com/midimurphdesigns/fieldops-mcp/blob/main/docs/TOOL_DESIGN.md">
