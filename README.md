@@ -4,6 +4,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
+**Showcase:** [fieldops-mcp.kevinmurphywebdev.com](https://fieldops-mcp.kevinmurphywebdev.com) — interactive tour of real captured exchanges for each of the 6 tools, plus a full live-Claude session.
+
 ## The problem
 
 A dispatcher at a 12-person field-services company juggles a queue of incoming requests, a roster of techs with overlapping skills, a moving schedule, and a list of customers expecting a real reply within minutes. An LLM is well-suited to most of that workflow — *if* it can read the queue, search the schedule, mutate state, draft customer-ready messages from real fixture data, run a utilization roll-up, and ask for human help when it should not act on its own.
