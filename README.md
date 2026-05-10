@@ -122,4 +122,4 @@ A dispatcher's morning. The agent triages the queue, finds an HVAC tech, books t
 
 ## Author
 
-Kevin Murphy — [kevinmurphywebdev.com](https://kevinmurphywebdev.com) · [GitHub](https://github.com/midimurphdesigns) · [LinkedIn](https://www.linkedin.com/in/kmurphywebdev)
+Kevin Murphy — [kevinmurphywebdev.com](https://kevinmurphywebdev.com) · [GitHub](https://github.com/midimurphdesigns) · [LinkedIn](https://www.linkedin.com/in/midimurphdesigns)
