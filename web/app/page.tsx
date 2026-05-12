@@ -1,9 +1,9 @@
 import { ExternalLink, Github, Info } from "lucide-react";
 
 import { Toaster } from "@/components/ui/sonner";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CopyableCode } from "@/components/copyable-code";
+import { Eyebrow } from "@/components/ui/eyebrow";
 import {
   Collapsible,
   CollapsibleContent,
@@ -37,7 +37,7 @@ export default function Page() {
       </a>
       <main id="content" className="min-h-screen px-4 py-12 sm:px-6 max-w-5xl mx-auto">
         <header className="mb-10 max-w-2xl">
-          <h1 className="text-3xl font-semibold tracking-tight mb-2">fieldops-mcp</h1>
+          <h1 className="type-display text-5xl mb-3">fieldops-mcp</h1>
           <p className="text-sm leading-6 text-[var(--color-muted-foreground)]">
             A Model Context Protocol server that exposes a small-business field-services
             dispatcher workflow as six agent tools. This page is a tour of real captured exchanges
@@ -92,28 +92,30 @@ export default function Page() {
 
         <ToolExplorer />
 
-        <Card className="mt-16 max-w-3xl">
-          <CardHeader>
-            <h2 className="text-base font-semibold">Run it yourself</h2>
-            <p className="text-xs leading-5 text-[var(--color-muted-foreground)]">
-              The showcase replays captured exchanges. To run the actual MCP server inside Claude
-              Desktop and drive it with your own prompts, clone the repo and wire it up — about 2
-              minutes.
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <CopyableCode code={CLONE_SNIPPET} />
-            <p className="text-xs leading-5 text-[var(--color-muted-foreground)]">
-              To register it with Claude Desktop, add an entry to{" "}
-              <code>~/Library/Application Support/Claude/claude_desktop_config.json</code>:
-            </p>
-            <CopyableCode code={CLAUDE_DESKTOP_CONFIG} />
-            <p className="text-xs leading-5 text-[var(--color-muted-foreground)]">
-              Restart Claude Desktop and the six tools appear in the tool picker. Now your prompts
-              drive them, not mine.
-            </p>
-          </CardContent>
-        </Card>
+        <section className="mt-16 border-t border-[var(--color-border)] pt-10 max-w-3xl">
+          <Eyebrow className="mb-3">Run it yourself</Eyebrow>
+          <h2 className="text-2xl tracking-tight mb-3">Two minutes from clone to Claude Desktop</h2>
+          <p className="text-sm leading-6 text-[var(--color-muted-foreground)] mb-6">
+            The showcase replays captured exchanges. To run the actual MCP server inside Claude
+            Desktop and drive it with your own prompts, clone the repo and wire it up.
+          </p>
+
+          <Eyebrow className="mb-2">01 — Clone &amp; smoke</Eyebrow>
+          <CopyableCode code={CLONE_SNIPPET} />
+
+          <p className="mt-6 mb-2 text-sm leading-6 text-[var(--color-muted-foreground)]">
+            <span className="type-eyebrow inline-block mr-2 align-middle">02 — Register</span>
+            Add an entry to{" "}
+            <code className="font-mono text-xs">~/Library/Application Support/Claude/claude_desktop_config.json</code>:
+          </p>
+          <CopyableCode code={CLAUDE_DESKTOP_CONFIG} />
+
+          <p className="mt-6 text-sm leading-6 text-[var(--color-muted-foreground)]">
+            <span className="type-eyebrow inline-block mr-2 align-middle">03 — Restart</span>
+            Claude Desktop reloads and the six tools appear in the tool picker. Now your prompts
+            drive them, not mine.
+          </p>
+        </section>
 
         <footer className="mt-12 pt-8 border-t border-[var(--color-border)] text-xs text-[var(--color-muted-foreground)] max-w-2xl">
           Six tools, six structurally distinct shapes. The interesting design work is choosing

@@ -3,7 +3,6 @@
 import * as React from "react";
 import { ArrowLeft, ArrowRight, MessageCircle, ShieldAlert, User } from "lucide-react";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -16,6 +15,37 @@ import { JsonBlock } from "@/components/json-block";
 import { toast } from "sonner";
 import type { TranscriptStep } from "@/lib/transcripts";
 
+/**
+ * Cluster turns: a "turn" begins with a user step and includes every
+ * subsequent step until the next user step. Visual grammar:
+ *
+ *   User → Assistant → tool-call → tool-result → (assistant) ...
+ *
+ * Each cluster gets a 1px trunk on the left so the related steps
+ * read as one strand, not 12 equal boxes. Tool calls/results are
+ * indented further (pl-8) under the assistant turn that emitted them.
+ *
+ * Cyan = agent acting on the world (user, tool-call). Bone = world
+ * answering (assistant, tool-result). Red = error.
+ */
+type Cluster = { user?: TranscriptStep; rest: TranscriptStep[] };
+
+function clusterSteps(steps: TranscriptStep[]): Cluster[] {
+  const clusters: Cluster[] = [];
+  let current: Cluster | null = null;
+  for (const step of steps) {
+    if (step.kind === "user") {
+      if (current) clusters.push(current);
+      current = { user: step, rest: [] };
+    } else {
+      if (!current) current = { rest: [] };
+      current.rest.push(step);
+    }
+  }
+  if (current) clusters.push(current);
+  return clusters;
+}
+
 export function Transcript({ steps }: { steps: TranscriptStep[] }) {
   if (!steps || steps.length === 0) {
     return (
@@ -24,26 +54,78 @@ export function Transcript({ steps }: { steps: TranscriptStep[] }) {
       </Alert>
     );
   }
+  const clusters = clusterSteps(steps);
+  let runningIndex = 0;
   return (
-    <ol className="space-y-3 text-xs leading-5">
-      {steps.map((step, i) => (
-        <li key={i}>
-          <Step step={step} index={i + 1} />
-        </li>
-      ))}
+    <ol className="space-y-8 text-xs leading-5">
+      {clusters.map((c, ci) => {
+        const startIdx = runningIndex + 1;
+        runningIndex += (c.user ? 1 : 0) + c.rest.length;
+        return (
+          <li key={ci}>
+            <TurnCluster cluster={c} turnNumber={ci + 1} startIndex={startIdx} />
+          </li>
+        );
+      })}
     </ol>
   );
 }
 
-function Step({ step, index }: { step: TranscriptStep; index: number }) {
+function TurnCluster({
+  cluster,
+  turnNumber,
+  startIndex,
+}: {
+  cluster: Cluster;
+  turnNumber: number;
+  startIndex: number;
+}) {
+  let i = startIndex;
+  return (
+    <div className="relative pl-5">
+      {/* Trunk — 1px vertical line that connects all steps in this turn */}
+      <span
+        aria-hidden
+        className="absolute left-1 top-3 bottom-3 w-px bg-[var(--color-border)]"
+      />
+      {/* Turn marker (subtle) */}
+      <span
+        aria-hidden
+        className="absolute left-0 top-2 font-mono text-[10px] text-[var(--color-muted-foreground)]/60 tabular-nums"
+      >
+        {String(turnNumber).padStart(2, "0")}
+      </span>
+
+      <div className="space-y-1.5">
+        {cluster.user && <Step step={cluster.user} index={i++} />}
+        {cluster.rest.map((s) => (
+          <Step
+            key={i}
+            step={s}
+            index={i++}
+            indent={s.kind === "tool-call" || s.kind === "tool-result" || s.kind === "tool-error"}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Step({
+  step,
+  index,
+  indent = false,
+}: {
+  step: TranscriptStep;
+  index: number;
+  indent?: boolean;
+}) {
+  const indentClass = indent ? "ml-6" : "";
+
   if (step.kind === "user") {
     return (
-      <div className="border-l-2 border-[var(--color-primary)] pl-3 py-1">
-        <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-[var(--color-muted-foreground)] mb-1">
-          <User className="size-3" />
-          <span>User</span>
-          <StepIndex index={index} />
-        </div>
+      <div className={`border-l-2 border-[var(--color-primary)] pl-3 py-1 ${indentClass}`}>
+        <RoleHeader icon={<User className="size-3" />} label="User" tint="primary" />
         <p className="whitespace-pre-wrap leading-5">{step.text}</p>
       </div>
     );
@@ -51,12 +133,8 @@ function Step({ step, index }: { step: TranscriptStep; index: number }) {
 
   if (step.kind === "assistant") {
     return (
-      <div className="border-l-2 border-white/20 pl-3 py-1">
-        <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-[var(--color-muted-foreground)] mb-1">
-          <MessageCircle className="size-3" />
-          <span>Assistant</span>
-          <StepIndex index={index} />
-        </div>
+      <div className={`border-l-2 border-[var(--color-foreground)]/30 pl-3 py-1 ${indentClass}`}>
+        <RoleHeader icon={<MessageCircle className="size-3" />} label="Assistant" tint="bone" />
         <p className="whitespace-pre-wrap leading-5">{step.text}</p>
       </div>
     );
@@ -64,89 +142,101 @@ function Step({ step, index }: { step: TranscriptStep; index: number }) {
 
   if (step.kind === "tool-call") {
     return (
-      <Card className="border-yellow-400/30 bg-yellow-400/[0.02]">
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <ArrowRight className="size-3.5 text-yellow-300" />
-            <span className="font-mono text-xs text-yellow-200">{step.name}</span>
-            <Badge variant="warning">tool call</Badge>
-            <span className="ml-auto"><StepIndex index={index} /></span>
-            <CopyJsonButton value={step.args} label={`Copy ${step.name} args`} />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <JsonBlock value={step.args} />
-        </CardContent>
-      </Card>
+      <div
+        className={`border-l-2 border-[var(--color-primary)]/40 border-dashed pl-3 py-1.5 ${indentClass}`}
+      >
+        <div className="flex flex-wrap items-center gap-2 mb-1">
+          <ArrowRight className="size-3 text-[var(--color-primary)]" />
+          <span className="font-mono text-[11px] text-[var(--color-primary)]">{step.name}</span>
+          <span className="type-eyebrow text-[var(--color-muted-foreground)]">request</span>
+          <CopyJsonButton value={step.args} label={`Copy ${step.name} args`} />
+        </div>
+        <JsonBlock value={step.args} />
+      </div>
     );
   }
 
   if (step.kind === "tool-error") {
     return (
-      <Alert variant="destructive">
+      <Alert variant="destructive" className={indentClass}>
         <ShieldAlert className="size-4" />
         <AlertTitle className="flex items-center gap-2">
           <Badge variant="destructive">{step.error}</Badge>
-          <span className="ml-auto"><StepIndex index={index} /></span>
         </AlertTitle>
         <AlertDescription>{step.message}</AlertDescription>
       </Alert>
     );
   }
 
-  // tool-result
-  return <ToolResultStep step={step} index={index} />;
+  return <ToolResultStep step={step} indentClass={indentClass} />;
+}
+
+function RoleHeader({
+  icon,
+  label,
+  tint,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  tint: "primary" | "bone";
+}) {
+  return (
+    <div
+      className={`flex items-center gap-2 mb-1 type-eyebrow ${
+        tint === "primary" ? "text-[var(--color-primary)]/80" : "text-[var(--color-muted-foreground)]"
+      }`}
+    >
+      {icon}
+      <span>{label}</span>
+    </div>
+  );
 }
 
 function ToolResultStep({
   step,
-  index,
+  indentClass,
 }: {
   step: Extract<TranscriptStep, { kind: "tool-result" }>;
-  index: number;
+  indentClass: string;
 }) {
   const json = JSON.stringify(step.json, null, 2);
   const isLong = json.split("\n").length > 20;
   const [open, setOpen] = React.useState(!isLong);
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <ArrowLeft className="size-3.5 text-[var(--color-muted-foreground)]" />
-          <Badge variant="muted">tool result</Badge>
-          <span className="ml-auto"><StepIndex index={index} /></span>
-          <CopyJsonButton value={step.json} label="Copy result JSON" />
+    <div
+      className={`border-l-2 border-[var(--color-border)] pl-3 py-1.5 ${indentClass}`}
+    >
+      <div className="flex flex-wrap items-center gap-2 mb-1">
+        <ArrowLeft className="size-3 text-[var(--color-muted-foreground)]" />
+        <span className="type-eyebrow text-[var(--color-muted-foreground)]">response</span>
+        <CopyJsonButton value={step.json} label="Copy result JSON" />
+      </div>
+      {isLong && !open ? (
+        <Collapsible open={open} onOpenChange={setOpen}>
+          <JsonBlock value={truncate(step.json)} maxHeight="20rem" />
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" size="sm" className="mt-2">
+              Show full ({json.split("\n").length} lines)
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent />
+        </Collapsible>
+      ) : (
+        <div>
+          <JsonBlock value={step.json} maxHeight="32rem" />
+          {isLong && (
+            <Button variant="ghost" size="sm" className="mt-2" onClick={() => setOpen(false)}>
+              Collapse
+            </Button>
+          )}
         </div>
-      </CardHeader>
-      <CardContent>
-        {isLong && !open ? (
-          <Collapsible open={open} onOpenChange={setOpen}>
-            <JsonBlock value={truncate(step.json)} maxHeight="20rem" />
-            <CollapsibleTrigger asChild>
-              <Button variant="ghost" size="sm" className="mt-2">
-                Show full ({json.split("\n").length} lines)
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent />
-          </Collapsible>
-        ) : (
-          <div>
-            <JsonBlock value={step.json} maxHeight="32rem" />
-            {isLong && (
-              <Button variant="ghost" size="sm" className="mt-2" onClick={() => setOpen(false)}>
-                Collapse
-              </Button>
-            )}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 }
 
 function truncate(value: unknown): unknown {
-  // Show only the first 10 keys / array entries.
   if (Array.isArray(value)) return value.slice(0, 10);
   if (value && typeof value === "object") {
     const out: Record<string, unknown> = {};
@@ -163,14 +253,6 @@ function truncate(value: unknown): unknown {
   return value;
 }
 
-function StepIndex({ index }: { index: number }) {
-  return (
-    <span className="font-mono text-[10px] text-[var(--color-muted-foreground)] tabular-nums">
-      #{index}
-    </span>
-  );
-}
-
 function CopyJsonButton({ value, label }: { value: unknown; label: string }) {
   function copy() {
     navigator.clipboard
@@ -185,7 +267,7 @@ function CopyJsonButton({ value, label }: { value: unknown; label: string }) {
       size="sm"
       onClick={copy}
       aria-label={label}
-      className="text-[10px] font-mono uppercase tracking-wider"
+      className="ml-auto text-[10px] font-mono uppercase tracking-wider"
     >
       Copy
     </Button>

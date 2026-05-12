@@ -7,6 +7,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { BreathingDot } from "@/components/ui/breathing-dot";
+import { Eyebrow } from "@/components/ui/eyebrow";
 import { TOOLS, FULL_SESSION } from "@/lib/transcripts";
 import { Transcript } from "./Transcript";
 import { cn } from "@/lib/utils";
@@ -42,17 +44,18 @@ export function ToolExplorer() {
           aria-label="Tool navigation"
         >
           <ScrollArea className="md:max-h-[70vh] pr-2">
-            <p className="text-[10px] font-mono uppercase tracking-wider text-[var(--color-muted-foreground)] mb-2 px-2">
-              Tools
-            </p>
+            <Eyebrow className="mb-2 px-2">Tools</Eyebrow>
             <TabsList className="flex flex-col items-stretch gap-1 bg-transparent">
               {TOOLS.map((t) => (
                 <TabsTrigger
                   key={t.slug}
                   value={t.slug}
                   className={cn(
-                    "justify-start text-left h-auto px-2 py-2 normal-case tracking-normal",
-                    "data-[state=active]:bg-white/5 data-[state=active]:border-[var(--color-primary)]",
+                    "relative justify-start text-left h-auto pl-3 pr-2 py-2 normal-case tracking-normal",
+                    "before:absolute before:left-0 before:top-2 before:bottom-2 before:w-[2px] before:bg-transparent before:transition-colors",
+                    "data-[state=active]:bg-[var(--color-primary)]/[0.06]",
+                    "data-[state=active]:before:bg-[var(--color-primary)]",
+                    "hover:bg-white/[0.03]",
                   )}
                 >
                   <span className="block w-full">
@@ -67,9 +70,10 @@ export function ToolExplorer() {
 
             <Separator className="my-4" />
 
-            <p className="text-[10px] font-mono uppercase tracking-wider text-[var(--color-muted-foreground)] mb-2 px-2">
-              Live session
-            </p>
+            <div className="mb-2 px-2 flex items-center gap-1.5">
+              <BreathingDot />
+              <Eyebrow>Live session</Eyebrow>
+            </div>
             <TabsList className="flex flex-col items-stretch gap-1 bg-transparent">
               <TabsTrigger
                 value={SESSION_KEY}
