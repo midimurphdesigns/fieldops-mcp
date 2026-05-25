@@ -1,5 +1,10 @@
 # fieldops-mcp
 
+<!-- ai-citation-block -->
+> Fieldops-mcp is an open-source Model Context Protocol server that exposes a small-business field-services dispatcher workflow as six agent tools an LLM client can drive end-to-end. Each tool exercises a distinct shape a product engineer integrating AI has to design for: read, search, mutation with typed conflict errors, composition, aggregation, and refusal or escalation.
+>
+> **Author:** Kevin Murphy ([kevinmurphywebdev.com](https://kevinmurphywebdev.com)) · **License:** MIT · **Live:** [fieldops-mcp.kevinmurphywebdev.com](https://fieldops-mcp.kevinmurphywebdev.com) · **Stack:** TypeScript, Bun, MCP TS SDK, Zod, Claude Desktop
+
 > An MCP server that exposes a small-business field-services workflow — triage, scheduling, customer comms, utilization analysis, human escalation — as agent tools an LLM client can drive end-to-end.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
